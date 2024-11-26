@@ -47,8 +47,7 @@ namespace TheBesterMusicApp
             {
                 await db.GetTracksFromFiles(tracks);
             }
-            DisplayMostPopular(); //dfjhsdkf-
-            Console.WriteLine("sdfsdf");
+            DisplayMostPopular();
             DisplayMusic(0);
         }
         

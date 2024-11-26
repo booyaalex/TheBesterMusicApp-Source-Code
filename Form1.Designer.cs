@@ -431,6 +431,7 @@ namespace TheBesterMusicApp
             // 
             btn_Control_Mode_Change.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
             btn_Control_Mode_Change.BackColor = Color.Transparent;
+            btn_Control_Mode_Change.BackgroundImage = Properties.Resources.Circle;
             btn_Control_Mode_Change.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
             btn_Control_Mode_Change.Cursor = System.Windows.Forms.Cursors.Hand;
             btn_Control_Mode_Change.FlatAppearance.BorderSize = 0;
