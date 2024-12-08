@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Diagnostics.Eventing.Reader;
 using System.Drawing;
 using System.IO;
@@ -25,6 +26,7 @@ namespace TheBesterMusicApp
         Track current_track;
         string selected_album = "";
         string selected_artist = "";
+        string selected_playlist = "";
 
         IWavePlayer music_player = new WaveOutEvent();
         AudioFileReader music_reader;
@@ -41,34 +43,38 @@ namespace TheBesterMusicApp
         private async void Form1_Load(object sender, EventArgs e)
         {
             Database db = await Database.Create();
-            
+
             tracks.AddRange(await db.GetAllTracks());
-            if(tracks.Count == 0)
+            if (tracks.Count == 0)
             {
                 await db.GetTracksFromFiles(tracks);
             }
-            DisplayMostPopular();
+            DisplayList(0);
             DisplayMusic(0);
         }
-        
+
         private void tab_Page_Select_TabIndexChanged(object sender, TabControlEventArgs e)
         {
             if (tab_Page_Select.SelectedTab.Name == "tp_Tracks")
             {
-                DisplayMostPopular();
+                DisplayList(0);
                 DisplayMusic(0);
             }
             else if (tab_Page_Select.SelectedTab.Name == "tp_Albums")
             {
-                DisplayAlbums();
+                DisplayList(1);
                 DisplayMusic(1);
             }
             else if (tab_Page_Select.SelectedTab.Name == "tp_Artists")
             {
-                DisplayArtists();
+                DisplayList(2);
                 DisplayMusic(2);
             }
-            
+            else if (tab_Page_Select.SelectedTab.Name == "tp_Playlists")
+            {
+                DisplayList(3);
+                DisplayMusic(3);
+            }
         }
         private async void DisplayMusic(int page)
         {
@@ -91,6 +97,11 @@ namespace TheBesterMusicApp
                 track_list = lv_Artists_Track_List;
                 displayed_tracks.AddRange(await db.GetTracksByProperty("artist", selected_artist));
             }
+            else if (page == 3)
+            {
+                track_list = lv_Playlists_Track_List;
+                displayed_tracks.AddRange(await db.GetTracksByProperty("artist", selected_artist));
+            }
 
             if (track_queue.Length == 0)
             {
@@ -108,78 +119,76 @@ namespace TheBesterMusicApp
                 track_list.Items[i].Tag = track;
             }
         }
-        private async void DisplayMostPopular()
+        private async void DisplayList(int page)
         {
             Database db = await Database.Create();
-            List<string> popular_tracks = await db.GetMostPopularTracks();
+            List<string> list = new List<string>();
+            ListView listview = new ListView();
 
-            lv_Tracks_Most_Popular.Clear();
-            foreach (string track in popular_tracks)
+            if (page == 0)
             {
-                ListViewItem item = new ListViewItem();
-                item.Text = track;
-                item.Tag = track;
-                this.lv_Tracks_Most_Popular.Items.Add(item);
+                list = await db.GetMostPopularTracks();
+                listview = lv_Tracks_Most_Popular;
+            }
+            else if (page == 1)
+            {
+                list = await db.GetAllWithProperty("album");
+                listview = lv_Albums_Album_List;
+                if (selected_album == "")
+                {
+                    selected_album = list[0];
+                }
+            }
+            else if (page == 2)
+            {
+                list = await db.GetAllWithProperty("artist");
+                listview = lv_Artists_Artist_List;
+                if (selected_artist == "")
+                {
+                    selected_artist = list[0];
+                }
+            }
+            else if (page == 3)
+            {
+                list = await db.GetAllWithProperty("artist");
+                listview = lv_Playlists_Playlist_List;
+                if (selected_playlist == "")
+                {
+                    selected_playlist = list[0];
+                }
+            }
+
+            listview.Clear();
+            foreach (string item in list)
+            {
+                ListViewItem listview_item = new ListViewItem();
+                listview_item.Text = item;
+                listview_item.Tag = item;
+                listview.Items.Add(listview_item);
             }
         }
-        private async void DisplayAlbums()
+        private void ListSelect(object sender, EventArgs e)
         {
-            Database db = await Database.Create();
-            List<string> album_list = await db.GetAllWithProperty("album");
-
-            if (selected_album == "")
+            ListView list = sender as ListView;
+            if (list.SelectedItems.Count < 1)
             {
-                selected_album = album_list[0];
+                return;
             }
-
-            lv_Albums_Album_List.Clear();
-            foreach (string album in album_list)
+            if (tab_Page_Select.SelectedTab.Name == "tp_Albums")
             {
-                ListViewItem item = new ListViewItem();
-                item.Text = album;
-                item.Tag = album;
-                this.lv_Albums_Album_List.Items.Add(item);
-            }
-        }
-        private void lv_Albums_Album_List_DoubleClick(object sender, EventArgs e)
-        {
-            if (lv_Albums_Album_List.SelectedItems.Count > 0)
-            {
-                selected_album = lv_Albums_Album_List.SelectedItems[0].Text;
+                selected_album = list.SelectedItems[0].Text;
                 DisplayMusic(1);
             }
-        }
-        private async void DisplayArtists()
-        {
-            Database db = await Database.Create();
-            List<string> artist_list = await db.GetAllWithProperty("artist");
-
-            if (selected_artist == "")
+            if (tab_Page_Select.SelectedTab.Name == "tp_Artists")
             {
-                selected_artist = artist_list[0];
-            }
-
-            lv_Artists_Artist_List.Clear();
-            foreach (string artist in artist_list)
-            {
-                ListViewItem item = new ListViewItem();
-                item.Text = artist;
-                item.Tag = artist;
-                this.lv_Artists_Artist_List.Items.Add(item);
-            }
-        }
-        private void lv_Artists_Artist_List_DoubleClick(object sender, EventArgs e)
-        {
-            if (lv_Artists_Artist_List.SelectedItems.Count > 0)
-            {
-                selected_artist = lv_Artists_Artist_List.SelectedItems[0].Text;
+                selected_artist = list.SelectedItems[0].Text;
                 DisplayMusic(2);
             }
-        }
-        private static Track[] SortTracks(Track[] tracks)
-        {
-            //Artist => Year => Album => Track No
-            return tracks.OrderBy(track => track.artist).ThenByDescending(track => track.year).ThenBy(track => track.album).ThenBy(track => track.track).ToArray();
+            if (tab_Page_Select.SelectedTab.Name == "tp_Playlists")
+            {
+                selected_artist = list.SelectedItems[0].Text;
+                DisplayMusic(3);
+            }
         }
 
         /*
@@ -212,7 +221,7 @@ namespace TheBesterMusicApp
             {
                 Console.WriteLine(e.Message);
             }
-            
+
 
         }
         private void UpdateTime(object sender, EventArgs e)
@@ -379,6 +388,12 @@ namespace TheBesterMusicApp
         {
             Database db = await Database.Create();
             await db.GetTracksFromFiles(tracks);
+        }
+
+        private async void btn_New_Playlist_Click(object sender, EventArgs e)
+        {
+            Database db = await Database.Create();
+            await db.CreatePlaylist("f");
         }
     }
     public struct Track

@@ -26,9 +26,9 @@ namespace TheBesterMusicApp
         }
         private async Task CreateDatabase()
         {
-            using (var command = this.Connection.CreateCommand())
-            {
-                command.CommandText = @"CREATE TABLE IF NOT EXISTS tracks (
+            using var command = this.Connection.CreateCommand();
+
+            command.CommandText = @"CREATE TABLE IF NOT EXISTS tracks (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 title TEXT NOT NULL,
                 artist TEXT,
@@ -41,9 +41,15 @@ namespace TheBesterMusicApp
                 play_count INTEGER,
                 rating FLOAT
                 )";
+            await command.ExecuteNonQueryAsync();
 
-                await command.ExecuteNonQueryAsync();
-            }
+            command.CommandText = @"CREATE TABLE IF NOT EXISTS playlists (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                name TEXT NOT NULL UNIQUE,
+                tracks TEXT,
+                track_count INTEGER
+                )";
+            await command.ExecuteNonQueryAsync();
         }
 
         public async Task GetTracksFromFiles(List<Track> tracks)
@@ -74,25 +80,23 @@ namespace TheBesterMusicApp
 
         private async Task InsertTracks(List<Track> tracks)
         {
-            using (var command = this.Connection.CreateCommand())
+            using var command = this.Connection.CreateCommand();
+            command.CommandText = "INSERT OR IGNORE INTO tracks (title, artist, album, path, track, track_count, year, duration, play_count) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9);";
+
+            foreach (Track t in tracks)
             {
-                command.CommandText = "INSERT OR IGNORE INTO tracks (title, artist, album, path, track, track_count, year, duration, play_count) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9);";
+                command.Parameters.Clear();
+                command.Parameters.AddWithValue("?1", t.title);
+                command.Parameters.AddWithValue("?2", t.artist);
+                command.Parameters.AddWithValue("?3", t.album);
+                command.Parameters.AddWithValue("?4", t.path);
+                command.Parameters.AddWithValue("?5", t.track);
+                command.Parameters.AddWithValue("?6", t.track_count);
+                command.Parameters.AddWithValue("?7", t.year);
+                command.Parameters.AddWithValue("?8", t.duration);
+                command.Parameters.AddWithValue("?9", 0);
 
-                foreach (Track t in tracks)
-                {
-                    command.Parameters.Clear();
-                    command.Parameters.AddWithValue("?1", t.title);
-                    command.Parameters.AddWithValue("?2", t.artist);
-                    command.Parameters.AddWithValue("?3", t.album);
-                    command.Parameters.AddWithValue("?4", t.path);
-                    command.Parameters.AddWithValue("?5", t.track);
-                    command.Parameters.AddWithValue("?6", t.track_count);
-                    command.Parameters.AddWithValue("?7", t.year);
-                    command.Parameters.AddWithValue("?8", t.duration);
-                    command.Parameters.AddWithValue("?9", 0);
-
-                    await command.ExecuteNonQueryAsync();
-                }
+                await command.ExecuteNonQueryAsync();
             }
         }
         private async Task RemoveTracks(List<Track> tracks)
@@ -223,20 +227,46 @@ namespace TheBesterMusicApp
         public async Task<List<string>> GetMostPopularTracks()
         {
             List<string> tracks = new List<string>();
+            using var command = this.Connection.CreateCommand();
 
-            using (var command = this.Connection.CreateCommand())
+            command.CommandText = "SELECT * FROM tracks WHERE play_count > 0 ORDER BY play_count DESC";
+            var data = await command.ExecuteReaderAsync();
+            while (await data.ReadAsync())
             {
-                command.CommandText = "SELECT * FROM tracks WHERE play_count > 0 ORDER BY play_count DESC";
-
-                var data = await command.ExecuteReaderAsync();
-                while (await data.ReadAsync())
-                {
-                    tracks.Add($"{data.GetString(1)}: {data.GetInt32(9)}");
-                }
-                await command.DisposeAsync();
+                tracks.Add($"{data.GetString(1)}: {data.GetInt32(9)}");
             }
+            await command.DisposeAsync();
 
             return tracks;
+        }
+
+        public async Task CreatePlaylist(string name)
+        {
+            using var command = this.Connection.CreateCommand();
+            command.CommandText = $"""INSERT INTO playlists (name) VALUES ("{name}");""";
+            try
+            {
+                await command.ExecuteNonQueryAsync();
+            }
+            catch (Exception err)
+            {
+                Console.WriteLine(err);
+            }
+        }
+
+        public async Task GetPlaylists()
+        {
+
+        }
+
+        public async Task GetPlaylist()
+        {
+
+        }
+
+        public async Task GetTracksFromPlaylist()
+        {
+
         }
 
         private static List<Track> SortTracks(List<Track> tracks)
