@@ -246,6 +246,13 @@ namespace TheBesterMusicApp
 
         public async Task CreatePlaylist(string name)
         {
+            List<string> playlists = await GetPlaylists();
+            if (playlists.Contains(name))
+            {
+                MessageBox.Show("You can't use a name that is already being used.");
+                return;
+            }
+
             using var command = this.Connection.CreateCommand();
             command.CommandText = $"""INSERT INTO playlists (name) VALUES ("{name}");""";
             try

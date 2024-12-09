@@ -394,6 +394,7 @@ namespace TheBesterMusicApp
             lv_Playlists_Track_List.TabIndex = 7;
             lv_Playlists_Track_List.UseCompatibleStateImageBehavior = false;
             lv_Playlists_Track_List.View = System.Windows.Forms.View.Details;
+            lv_Playlists_Track_List.DoubleClick += Track_List_DoubleClick;
             lv_Playlists_Track_List.MouseClick += Track_List_RightClick;
             // 
             // columnHeader1

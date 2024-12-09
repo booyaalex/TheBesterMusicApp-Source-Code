@@ -17,6 +17,7 @@ using Windows.Media.Playback;
 using static System.Net.Mime.MediaTypeNames;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.TextBox;
+using Microsoft.VisualBasic;
 
 namespace TheBesterMusicApp
 {
@@ -57,26 +58,9 @@ namespace TheBesterMusicApp
 
         private void tab_Page_Select_TabIndexChanged(object sender, TabControlEventArgs e)
         {
-            if (tab_Page_Select.SelectedTab.Name == "tp_Tracks")
-            {
-                DisplayList(0);
-                DisplayMusic(0);
-            }
-            else if (tab_Page_Select.SelectedTab.Name == "tp_Albums")
-            {
-                DisplayList(1);
-                DisplayMusic(1);
-            }
-            else if (tab_Page_Select.SelectedTab.Name == "tp_Artists")
-            {
-                DisplayList(2);
-                DisplayMusic(2);
-            }
-            else if (tab_Page_Select.SelectedTab.Name == "tp_Playlists")
-            {
-                DisplayList(3);
-                DisplayMusic(3);
-            }
+            int page = GetPageIndex();
+            DisplayList(page);
+            DisplayMusic(page);
         }
         private async void DisplayMusic(int page)
         {
@@ -169,6 +153,27 @@ namespace TheBesterMusicApp
                 listview.Items.Add(listview_item);
             }
         }
+
+        private int GetPageIndex()
+        {
+            if (tab_Page_Select.SelectedTab.Name == "tp_Tracks")
+            {
+                return 0;
+            } 
+            else if (tab_Page_Select.SelectedTab.Name == "tp_Albums")
+            {
+                return 1;
+            }
+            else if (tab_Page_Select.SelectedTab.Name == "tp_Artists")
+            {
+                return 2;
+            }
+            else if (tab_Page_Select.SelectedTab.Name == "tp_Playlists")
+            {
+                return 3;
+            }
+            return -1;
+        }
         private void ListSelect(object sender, EventArgs e)
         {
             ListView list = sender as ListView;
@@ -176,21 +181,21 @@ namespace TheBesterMusicApp
             {
                 return;
             }
-            if (tab_Page_Select.SelectedTab.Name == "tp_Albums")
+
+            int page = GetPageIndex();
+            if (page == 1)
             {
                 selected_album = list.SelectedItems[0].Text;
-                DisplayMusic(1);
             }
-            if (tab_Page_Select.SelectedTab.Name == "tp_Artists")
+            if (page == 2)
             {
                 selected_artist = list.SelectedItems[0].Text;
-                DisplayMusic(2);
             }
-            if (tab_Page_Select.SelectedTab.Name == "tp_Playlists")
+            if (page == 3)
             {
-                selected_artist = list.SelectedItems[0].Text;
-                DisplayMusic(3);
+                selected_playlist = list.SelectedItems[0].Text;
             }
+            DisplayMusic(page);
         }
 
         /*
@@ -375,7 +380,10 @@ namespace TheBesterMusicApp
             }
             else
             {
-                track_queue = track_queue.OrderBy(track => track.artist).ThenByDescending(track => track.year).ThenBy(track => track.album).ThenBy(track => track.track).ToArray();
+                if(GetPageIndex() != 3)
+                {
+                    track_queue = track_queue.OrderBy(track => track.artist).ThenByDescending(track => track.year).ThenBy(track => track.album).ThenBy(track => track.track).ToArray();
+                }
             }
         }
 
@@ -396,7 +404,9 @@ namespace TheBesterMusicApp
         private async void btn_New_Playlist_Click(object sender, EventArgs e)
         {
             Database db = await Database.Create();
-            await db.CreatePlaylist("f");
+            string input = Interaction.InputBox("Enter in The Name of Your Playlist:", "Type in a Name");
+            await db.CreatePlaylist(input);
+            DisplayList(3);
         }
 
         private async void Track_List_RightClick(object sender, MouseEventArgs e)
@@ -424,21 +434,24 @@ namespace TheBesterMusicApp
             ToolStripMenuItem item = sender as ToolStripMenuItem;
             ListView listview = new ListView();
 
-            if (tab_Page_Select.SelectedTab.Name == "tp_Tracks")
+            int page = GetPageIndex();
+            switch (page)
             {
-                listview = this.lv_Tracks_Track_List;
-            }
-            else if (tab_Page_Select.SelectedTab.Name == "tp_Albums")
-            {
-                listview = this.lv_Albums_Track_List;
-            }
-            else if (tab_Page_Select.SelectedTab.Name == "tp_Artists")
-            {
-                listview = this.lv_Artists_Track_List;
-            }
-            else if (tab_Page_Select.SelectedTab.Name == "tp_Playlists")
-            {
-                listview = this.lv_Playlists_Track_List;
+                case 0:
+                    listview = this.lv_Tracks_Track_List;
+                    break;
+
+                case 1:
+                    listview = this.lv_Albums_Track_List;
+                    break;
+
+                case 2:
+                    listview = this.lv_Artists_Track_List;
+                    break;
+
+                case 3:
+                    listview = this.lv_Playlists_Track_List;
+                    break;
             }
             if (listview.SelectedItems.Count < 1)
             {
