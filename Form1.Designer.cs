@@ -81,6 +81,8 @@ namespace TheBesterMusicApp
             tkb_Control_Time_Bar = new System.Windows.Forms.TrackBar();
             pic_Control_Album_Cover = new System.Windows.Forms.PictureBox();
             tmr_Track_Timer = new System.Windows.Forms.Timer(components);
+            cms_Track_Menu = new System.Windows.Forms.ContextMenuStrip(components);
+            tsmi_Add_To_Playlist = new System.Windows.Forms.ToolStripMenuItem();
             tab_Page_Select.SuspendLayout();
             tp_Tracks.SuspendLayout();
             tp_Albums.SuspendLayout();
@@ -92,6 +94,7 @@ namespace TheBesterMusicApp
             ((System.ComponentModel.ISupportInitialize)tkb_Control_Volume).BeginInit();
             ((System.ComponentModel.ISupportInitialize)tkb_Control_Time_Bar).BeginInit();
             ((System.ComponentModel.ISupportInitialize)pic_Control_Album_Cover).BeginInit();
+            cms_Track_Menu.SuspendLayout();
             SuspendLayout();
             // 
             // tab_Page_Select
@@ -162,6 +165,7 @@ namespace TheBesterMusicApp
             lv_Tracks_Track_List.UseCompatibleStateImageBehavior = false;
             lv_Tracks_Track_List.View = System.Windows.Forms.View.Details;
             lv_Tracks_Track_List.DoubleClick += Track_List_DoubleClick;
+            lv_Tracks_Track_List.MouseClick += Track_List_RightClick;
             // 
             // Tracks_No
             // 
@@ -246,6 +250,7 @@ namespace TheBesterMusicApp
             lv_Albums_Track_List.UseCompatibleStateImageBehavior = false;
             lv_Albums_Track_List.View = System.Windows.Forms.View.Details;
             lv_Albums_Track_List.DoubleClick += Track_List_DoubleClick;
+            lv_Albums_Track_List.MouseClick += Track_List_RightClick;
             // 
             // Albums_No
             // 
@@ -319,6 +324,7 @@ namespace TheBesterMusicApp
             lv_Artists_Track_List.UseCompatibleStateImageBehavior = false;
             lv_Artists_Track_List.View = System.Windows.Forms.View.Details;
             lv_Artists_Track_List.DoubleClick += Track_List_DoubleClick;
+            lv_Artists_Track_List.MouseClick += Track_List_RightClick;
             // 
             // Artists_No
             // 
@@ -388,6 +394,7 @@ namespace TheBesterMusicApp
             lv_Playlists_Track_List.TabIndex = 7;
             lv_Playlists_Track_List.UseCompatibleStateImageBehavior = false;
             lv_Playlists_Track_List.View = System.Windows.Forms.View.Details;
+            lv_Playlists_Track_List.MouseClick += Track_List_RightClick;
             // 
             // columnHeader1
             // 
@@ -638,6 +645,18 @@ namespace TheBesterMusicApp
             pic_Control_Album_Cover.TabIndex = 0;
             pic_Control_Album_Cover.TabStop = false;
             // 
+            // cms_Track_Menu
+            // 
+            cms_Track_Menu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { tsmi_Add_To_Playlist });
+            cms_Track_Menu.Name = "contextMenuStrip1";
+            cms_Track_Menu.Size = new Size(151, 26);
+            // 
+            // tsmi_Add_To_Playlist
+            // 
+            tsmi_Add_To_Playlist.Name = "tsmi_Add_To_Playlist";
+            tsmi_Add_To_Playlist.Size = new Size(150, 22);
+            tsmi_Add_To_Playlist.Text = "Add to Playlist";
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -663,6 +682,7 @@ namespace TheBesterMusicApp
             ((System.ComponentModel.ISupportInitialize)tkb_Control_Volume).EndInit();
             ((System.ComponentModel.ISupportInitialize)tkb_Control_Time_Bar).EndInit();
             ((System.ComponentModel.ISupportInitialize)pic_Control_Album_Cover).EndInit();
+            cms_Track_Menu.ResumeLayout(false);
             ResumeLayout(false);
         }
 
@@ -719,6 +739,8 @@ namespace TheBesterMusicApp
         private System.Windows.Forms.ColumnHeader columnHeader4;
         private System.Windows.Forms.ColumnHeader columnHeader5;
         private System.Windows.Forms.Button btn_New_Playlist;
+        private System.Windows.Forms.ContextMenuStrip cms_Track_Menu;
+        private System.Windows.Forms.ToolStripMenuItem tsmi_Add_To_Playlist;
     }
 }
 

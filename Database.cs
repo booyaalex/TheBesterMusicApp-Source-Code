@@ -1,12 +1,17 @@
 ﻿using Microsoft.Data.Sqlite;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Formats.Tar;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Xml.Linq;
+using Windows.Media.Playlists;
+using System.Runtime.Serialization.Json;
+using Windows.Foundation;
 
 namespace TheBesterMusicApp
 {
@@ -46,8 +51,7 @@ namespace TheBesterMusicApp
             command.CommandText = @"CREATE TABLE IF NOT EXISTS playlists (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 name TEXT NOT NULL UNIQUE,
-                tracks TEXT,
-                track_count INTEGER
+                tracks TEXT
                 )";
             await command.ExecuteNonQueryAsync();
         }
@@ -254,19 +258,91 @@ namespace TheBesterMusicApp
             }
         }
 
-        public async Task GetPlaylists()
+        public async Task<List<string>> GetPlaylists()
         {
+            List<string> playlists = new List<string>();
+            using var command = this.Connection.CreateCommand();
 
+            command.CommandText = "SELECT * FROM playlists";
+            var data = await command.ExecuteReaderAsync();
+            while (await data.ReadAsync())
+            {
+                playlists.Add(data.GetString(1));
+            }
+            await command.DisposeAsync();
+
+            return playlists;
         }
 
-        public async Task GetPlaylist()
+        public async Task<List<Track>> GetTracksFromPlaylist(string playlist_name)
         {
+            List<Track> tracks = new List<Track>();
 
+            using var command = this.Connection.CreateCommand();
+            command.CommandText = $"""
+            SELECT tracks FROM playlists 
+            WHERE name="{playlist_name}" 
+            """;
+            var data = await command.ExecuteReaderAsync();
+            while (await data.ReadAsync())
+            {
+                var test = data.GetValue(0);
+                if (test.ToString().Length > 0)
+                {
+                    tracks = DeserializeTracks(data.GetString(0));
+                }
+            }
+            await command.DisposeAsync();
+            
+            return tracks;
         }
 
-        public async Task GetTracksFromPlaylist()
+        public async Task AddTrackToPlaylist(Track track, string playlist_name)
         {
+            List<Track> tracks = new List<Track>();
+            tracks = await GetTracksFromPlaylist(playlist_name);
+            tracks.Add(track);
 
+            string tracks_string = SerializeTracks(tracks);
+            Debug.WriteLine(tracks_string);
+
+            using var command = this.Connection.CreateCommand();
+            command.CommandText = $"""
+            UPDATE playlists
+            SET tracks = json(' {tracks_string} ')
+            WHERE name = "{playlist_name}"
+            """;
+            try
+            {
+                await command.ExecuteNonQueryAsync();
+            }
+            catch (Exception err)
+            {
+                Debug.WriteLine(err);
+                Debug.WriteLine(tracks_string);
+            }
+        }
+
+        private static string SerializeTracks(List<Track> tracks)
+        {
+            DataContractJsonSerializer serializer = new DataContractJsonSerializer(typeof(List<Track>));
+            MemoryStream ms = new MemoryStream();
+            serializer.WriteObject(ms, tracks);
+
+            ms.Position = 0;
+            StreamReader sr = new StreamReader(ms);
+            string tracks_string = sr.ReadToEnd();
+
+            tracks_string = tracks_string.Replace('\'', '`');
+            return tracks_string;
+        }
+        private static List<Track> DeserializeTracks(string tracks_string)
+        {
+            tracks_string = tracks_string.Replace('`', '\'');
+            using MemoryStream ms = new MemoryStream(Encoding.Unicode.GetBytes(tracks_string));
+            DataContractJsonSerializer deserializer = new DataContractJsonSerializer(typeof(List<Track>));
+            List<Track> tracks = (List<Track>)deserializer.ReadObject(ms);
+            return tracks;
         }
 
         private static List<Track> SortTracks(List<Track> tracks)
