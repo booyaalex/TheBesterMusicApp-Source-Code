@@ -330,6 +330,36 @@ namespace TheBesterMusicApp
             }
         }
 
+        public async Task RemoveTrackFromPlaylist(Track track, string playlist_name)
+        {
+            List<Track> tracks = new List<Track>();
+            tracks = await GetTracksFromPlaylist(playlist_name);
+
+            if(tracks.Contains(track))
+            {
+                tracks.Remove(track);
+            }
+
+            string tracks_string = SerializeTracks(tracks);
+            Debug.WriteLine(tracks_string);
+
+            using var command = this.Connection.CreateCommand();
+            command.CommandText = $"""
+            UPDATE playlists
+            SET tracks = json(' {tracks_string} ')
+            WHERE name = "{playlist_name}"
+            """;
+            try
+            {
+                await command.ExecuteNonQueryAsync();
+            }
+            catch (Exception err)
+            {
+                Debug.WriteLine(err);
+                Debug.WriteLine(tracks_string);
+            }
+        }
+
         private static string SerializeTracks(List<Track> tracks)
         {
             DataContractJsonSerializer serializer = new DataContractJsonSerializer(typeof(List<Track>));

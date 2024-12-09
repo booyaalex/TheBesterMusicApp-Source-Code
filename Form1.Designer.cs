@@ -83,6 +83,7 @@ namespace TheBesterMusicApp
             tmr_Track_Timer = new System.Windows.Forms.Timer(components);
             cms_Track_Menu = new System.Windows.Forms.ContextMenuStrip(components);
             tsmi_Add_To_Playlist = new System.Windows.Forms.ToolStripMenuItem();
+            tsmi_Remove_From_Playlist = new System.Windows.Forms.ToolStripMenuItem();
             tab_Page_Select.SuspendLayout();
             tp_Tracks.SuspendLayout();
             tp_Albums.SuspendLayout();
@@ -648,15 +649,23 @@ namespace TheBesterMusicApp
             // 
             // cms_Track_Menu
             // 
-            cms_Track_Menu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { tsmi_Add_To_Playlist });
+            cms_Track_Menu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { tsmi_Add_To_Playlist, tsmi_Remove_From_Playlist });
             cms_Track_Menu.Name = "contextMenuStrip1";
-            cms_Track_Menu.Size = new Size(151, 26);
+            cms_Track_Menu.Size = new Size(189, 70);
             // 
             // tsmi_Add_To_Playlist
             // 
             tsmi_Add_To_Playlist.Name = "tsmi_Add_To_Playlist";
-            tsmi_Add_To_Playlist.Size = new Size(150, 22);
+            tsmi_Add_To_Playlist.Size = new Size(188, 22);
             tsmi_Add_To_Playlist.Text = "Add to Playlist";
+            // 
+            // tsmi_Remove_From_Playlist
+            // 
+            tsmi_Remove_From_Playlist.Enabled = false;
+            tsmi_Remove_From_Playlist.Name = "tsmi_Remove_From_Playlist";
+            tsmi_Remove_From_Playlist.Size = new Size(188, 22);
+            tsmi_Remove_From_Playlist.Text = "Remove From Playlist";
+            tsmi_Remove_From_Playlist.Click += tsmi_Remove_From_Playlist_Click;
             // 
             // Form1
             // 
@@ -742,6 +751,7 @@ namespace TheBesterMusicApp
         private System.Windows.Forms.Button btn_New_Playlist;
         private System.Windows.Forms.ContextMenuStrip cms_Track_Menu;
         private System.Windows.Forms.ToolStripMenuItem tsmi_Add_To_Playlist;
+        private System.Windows.Forms.ToolStripMenuItem tsmi_Remove_From_Playlist;
     }
 }
 

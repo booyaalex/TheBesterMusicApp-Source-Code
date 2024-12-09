@@ -159,7 +159,7 @@ namespace TheBesterMusicApp
             if (tab_Page_Select.SelectedTab.Name == "tp_Tracks")
             {
                 return 0;
-            } 
+            }
             else if (tab_Page_Select.SelectedTab.Name == "tp_Albums")
             {
                 return 1;
@@ -380,7 +380,7 @@ namespace TheBesterMusicApp
             }
             else
             {
-                if(GetPageIndex() != 3)
+                if (GetPageIndex() != 3)
                 {
                     track_queue = track_queue.OrderBy(track => track.artist).ThenByDescending(track => track.year).ThenBy(track => track.album).ThenBy(track => track.track).ToArray();
                 }
@@ -413,7 +413,9 @@ namespace TheBesterMusicApp
         {
             if (e.Button != MouseButtons.Right) { return; }
             ToolStripMenuItem playlist_dropdown = this.tsmi_Add_To_Playlist;
+            this.tsmi_Remove_From_Playlist.Enabled = false;
             playlist_dropdown.DropDownItems.Clear();
+
 
             Database db = await Database.Create();
             List<string> playlists = await db.GetPlaylists();
@@ -423,6 +425,11 @@ namespace TheBesterMusicApp
                 item.Text = playlist;
                 item.Click += tsmi_Add_To_Playlist_Selected;
                 playlist_dropdown.DropDownItems.Add(item);
+            }
+
+            if (GetPageIndex() == 3)
+            {
+                this.tsmi_Remove_From_Playlist.Enabled = true;
             }
 
             cms_Track_Menu.Show(Cursor.Position);
@@ -459,6 +466,40 @@ namespace TheBesterMusicApp
             }
 
             await db.AddTrackToPlaylist((Track)listview.SelectedItems[0].Tag, item.Text);
+        }
+
+        private async void tsmi_Remove_From_Playlist_Click(object sender, EventArgs e)
+        {
+            Database db = await Database.Create();
+            ToolStripMenuItem item = sender as ToolStripMenuItem;
+            ListView listview = new ListView();
+
+            int page = GetPageIndex();
+            switch (page)
+            {
+                case 0:
+                    listview = this.lv_Tracks_Track_List;
+                    break;
+
+                case 1:
+                    listview = this.lv_Albums_Track_List;
+                    break;
+
+                case 2:
+                    listview = this.lv_Artists_Track_List;
+                    break;
+
+                case 3:
+                    listview = this.lv_Playlists_Track_List;
+                    break;
+            }
+            if (listview.SelectedItems.Count < 1)
+            {
+                return;
+            }
+
+            await db.RemoveTrackFromPlaylist((Track)listview.SelectedItems[0].Tag, selected_playlist);
+            DisplayMusic(3);
         }
     }
     public struct Track
