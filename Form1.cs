@@ -24,9 +24,9 @@ namespace TheBesterMusicApp
 {
     public partial class Form1 : Form
     {
-        List<Track> tracks = new List<Track>();
-        List<Track> displayed_tracks = new List<Track>();
-        Track[] track_queue = new Track[0];
+        List<Track> tracks = [];
+        List<Track> displayed_tracks = [];
+        Track[] track_queue = [];
         Track current_track;
         string selected_album = "";
         string selected_artist = "";
@@ -44,7 +44,6 @@ namespace TheBesterMusicApp
         public Form1()
         {
             InitializeComponent();
-            MapPages();
         }
 
         /*
@@ -52,10 +51,13 @@ namespace TheBesterMusicApp
          */
         private void MapPages()
         {
+            pages = new Page[4];
             pages[0] = new Page(0, lv_Tracks_Track_List, lv_Tracks_Most_Popular);
             pages[1] = new Page(1, lv_Albums_Track_List, lv_Albums_Album_List);
             pages[2] = new Page(2, lv_Artists_Track_List, lv_Artists_Artist_List);
             pages[3] = new Page(3, lv_Playlists_Track_List, lv_Playlists_Playlist_List);
+
+            current_page = pages[0];
         }
         private Page GetPage()
         {
@@ -90,6 +92,9 @@ namespace TheBesterMusicApp
             {
                 await db.GetTracksFromFiles(tracks);
             }
+
+            MapPages();
+
             DisplayList();
             DisplayMusic();
         }
@@ -109,7 +114,7 @@ namespace TheBesterMusicApp
             Track track;
             ListView track_list = current_page.track_list;
             displayed_tracks.Clear();
-            
+
             if (current_page.index == 0)
             {
                 displayed_tracks.AddRange(tracks);
@@ -137,7 +142,7 @@ namespace TheBesterMusicApp
             {
                 track = displayed_tracks[i];
 
-                string[] row = { track.title, track.album, track.artist, ConvertToTimestamp(track.duration) };
+                string[] row = [track.title, track.album, track.artist, ConvertToTimestamp(track.duration)];
                 track_list.Items.Add(track.track.ToString()).SubItems.AddRange(row);
                 track_list.Items[i].Tag = track;
             }
@@ -145,18 +150,16 @@ namespace TheBesterMusicApp
         private async void DisplayList()
         {
             Database db = await Database.Create();
-            List<string> item_list = new List<string>();
-            ListView selection_list = new ListView();
+            List<string> item_list = [];
+            ListView selection_list = current_page.selection_list;
 
             if (current_page.index == 0)
             {
                 item_list = await db.GetMostPopularTracks();
-                selection_list = lv_Tracks_Most_Popular;
             }
             else if (current_page.index == 1)
             {
                 item_list = await db.GetAllWithProperty("album");
-                selection_list = lv_Albums_Album_List;
                 if (selected_album == "")
                 {
                     selected_album = item_list[0];
@@ -165,7 +168,6 @@ namespace TheBesterMusicApp
             else if (current_page.index == 2)
             {
                 item_list = await db.GetAllWithProperty("artist");
-                selection_list = lv_Artists_Artist_List;
                 if (selected_artist == "")
                 {
                     selected_artist = item_list[0];
@@ -174,7 +176,6 @@ namespace TheBesterMusicApp
             else if (current_page.index == 3)
             {
                 item_list = await db.GetPlaylists();
-                selection_list = lv_Playlists_Playlist_List;
                 if (selected_playlist == "")
                 {
                     selected_playlist = item_list[0];
@@ -187,7 +188,7 @@ namespace TheBesterMusicApp
                 selection_list.Items.Add(item);
             }
         }
-        
+
         private void ListSelect(object sender, EventArgs e)
         {
             ListView selected_list = current_page.selection_list;
@@ -270,11 +271,9 @@ namespace TheBesterMusicApp
                 DisplayTrackOnControl(track);
             }
         }
-        private async Task DisplayTrackOnControl(Track track)
+        private void DisplayTrackOnControl(Track track)
         {
-            Database db = await Database.Create();
-
-            pic_Control_Album_Cover.Image = db.GetImageFromPath(track.path);
+            pic_Control_Album_Cover.Image = Database.GetImageFromPath(track.path);
             lbl_Control_Track_Name.Text = track.title;
             lbl_Control_Album_Name.Text = track.album;
             lbl_Control_Artist_Name.Text = track.artist;
@@ -283,14 +282,13 @@ namespace TheBesterMusicApp
         }
         private void Track_List_DoubleClick(object sender, EventArgs e)
         {
-            Track track;
-            ListView track_list = sender as ListView;
+            ListView track_list = current_page.track_list;
             if (track_list.SelectedItems.Count > 0)
             {
                 track_queue = displayed_tracks.ToArray();
                 ChangeMode();
 
-                track = (Track)track_list.SelectedItems[0].Tag;
+                Track track = (Track)track_list.SelectedItems[0].Tag;
                 PlayTrack(track);
                 DisplayTrackOnControl(track);
             }
@@ -322,7 +320,7 @@ namespace TheBesterMusicApp
 
         private void btn_Control_Previous_Button_Click(object sender, EventArgs e)
         {
-            Track track;
+            Track track = current_track;
             int index = Array.IndexOf(track_queue, current_track);
             if (current_mode != 2)
             {
@@ -333,16 +331,12 @@ namespace TheBesterMusicApp
                 }
                 track = track_queue[index];
             }
-            else
-            {
-                track = current_track;
-            }
             PlayTrack(track);
             DisplayTrackOnControl(track);
         }
         private void btn_Control_Next_Button_Click(object sender, EventArgs e)
         {
-            Track track;
+            Track track = current_track;
             int index = Array.IndexOf(track_queue, current_track);
             if (current_mode != 2)
             {
@@ -352,10 +346,6 @@ namespace TheBesterMusicApp
                     index = 0;
                 }
                 track = track_queue[index];
-            }
-            else
-            {
-                track = current_track;
             }
             PlayTrack(track);
             DisplayTrackOnControl(track);
@@ -388,7 +378,7 @@ namespace TheBesterMusicApp
         {
             if (current_mode == 1)
             {
-                Random rng = new Random();
+                Random rng = new();
                 track_queue = track_queue.OrderBy(track => rng.Next()).ToArray();
             }
             else
@@ -434,8 +424,10 @@ namespace TheBesterMusicApp
             List<string> playlist_list = await db.GetPlaylists();
             foreach (string playlist in playlist_list)
             {
-                ToolStripMenuItem item = new ToolStripMenuItem();
-                item.Text = playlist;
+                ToolStripMenuItem item = new()
+                {
+                    Text = playlist
+                };
                 item.Click += tsmi_Add_To_Playlist_Selected;
                 playlist_dropdown.DropDownItems.Add(item);
             }
@@ -547,16 +539,10 @@ namespace TheBesterMusicApp
         public int year;
     }
 
-    public struct Page
+    public struct Page(int index, ListView track_list, ListView selection_list)
     {
-        public int index;
-        public ListView track_list;
-        public ListView selection_list;
-        public Page(int index, ListView track_list, ListView selection_list)
-        {
-            this.index = index;
-            this.track_list = track_list;
-            this.selection_list = selection_list;
-        }
+        public int index = index;
+        public ListView track_list = track_list;
+        public ListView selection_list = selection_list;
     }
 }

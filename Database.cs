@@ -20,11 +20,13 @@ namespace TheBesterMusicApp
         private SqliteConnection Connection { get; set; }
         public static async Task<Database> Create()
         {
-            SqliteConnection connection = new SqliteConnection("Data Source=Data.db");
+            SqliteConnection connection = new("Data Source=Data.db");
             await connection.OpenAsync();
 
-            Database db = new Database();
-            db.Connection = connection;
+            Database db = new()
+            {
+                Connection = connection
+            };
 
             await db.CreateDatabase();
             return db;
@@ -65,7 +67,7 @@ namespace TheBesterMusicApp
             {
                 TagLib.File tagFile = TagLib.File.Create(dir);
 
-                Track track = new Track()
+                Track track = new()
                 {
                     artist = tagFile.Tag.FirstPerformer,
                     album = tagFile.Tag.Album,
@@ -110,33 +112,30 @@ namespace TheBesterMusicApp
 
             List<string> db_paths = await GetAllWithProperty("path");
 
-            using (var command = this.Connection.CreateCommand())
+            using var command = this.Connection.CreateCommand();
+            command.CommandText = $"DELETE FROM tracks WHERE path=\"?1\"";
+            foreach (string path in db_paths)
             {
-                command.CommandText = $"DELETE FROM tracks WHERE path=\"?1\"";
-                foreach (string path in db_paths)
+                if(!paths.Contains(path))
                 {
-                    if(!paths.Contains(path))
-                    {
-                        command.Parameters.AddWithValue("?1", path);
-
-                        await command.ExecuteNonQueryAsync();
-                    }
+                    command.Parameters.AddWithValue("?1", path);
+                    await command.ExecuteNonQueryAsync();
                 }
             }
         }
 
         public async Task<List<Track>> GetAllTracks()
         {
-            List<Track> tracks = new List<Track>();
-            using (var command = this.Connection.CreateCommand())
-            {
+            List<Track> tracks = [];
+            using var command = this.Connection.CreateCommand();
+            
                 command.CommandText = "SELECT * FROM tracks";
 
                 var data = await command.ExecuteReaderAsync();
                 while (await data.ReadAsync())
                 {
                     Console.WriteLine($"{data.GetValue(0)}: {data.GetValue(1)}");
-                    Track track = new Track()
+                    Track track = new()
                     {
                         title = data.GetString(1),
                         artist = data.GetString(2),
@@ -152,14 +151,14 @@ namespace TheBesterMusicApp
                 await command.DisposeAsync();
 
                 return SortTracks(tracks);
-            }
+            
         }
 
         public async Task<List<string>> GetAllWithProperty(string property)
         {
-            List<string> list = new List<string>();
-            using (var command = this.Connection.CreateCommand())
-            {
+            List<string> list = [];
+            using var command = this.Connection.CreateCommand();
+            
                 command.CommandText = $"SELECT DISTINCT ({property}) FROM tracks";
 
                 var data = await command.ExecuteReaderAsync();
@@ -170,20 +169,19 @@ namespace TheBesterMusicApp
                 await command.DisposeAsync();
 
                 return list;
-            }
+            
         }
 
         public async Task<List<Track>> GetTracksByProperty(string property, string property_value)
         {
-            List<Track> tracks = new List<Track>();
-            using (var command = this.Connection.CreateCommand())
-            {
+            List<Track> tracks = [];
+            using var command = this.Connection.CreateCommand();
                 command.CommandText = $"SELECT * FROM tracks WHERE {property}=\"{property_value}\"";
 
                 var data = await command.ExecuteReaderAsync();
                 while (await data.ReadAsync())
                 {
-                    Track track = new Track()
+                    Track track = new()
                     {
                         title = data.GetString(1),
                         artist = data.GetString(2),
@@ -199,17 +197,17 @@ namespace TheBesterMusicApp
                 await command.DisposeAsync();
 
                 return SortTracks(tracks);
-            }
+            
         }
 
-        public System.Drawing.Image GetImageFromPath(string path)
+        public static System.Drawing.Image GetImageFromPath(string path)
         {
             System.Drawing.Image image = Properties.Resources.rect;
 
             TagLib.File tagFile = TagLib.File.Create(path);
             if (tagFile.Tag.Pictures.Length > 0)
             {
-                MemoryStream ms = new MemoryStream(tagFile.Tag.Pictures[0].Data.Data);
+                MemoryStream ms = new(tagFile.Tag.Pictures[0].Data.Data);
                 image = System.Drawing.Image.FromStream(ms);
             }
             return image;
@@ -217,20 +215,20 @@ namespace TheBesterMusicApp
 
         public async Task IncrementPlayCount(Track track)
         {
-            using (var command = this.Connection.CreateCommand())
-            {
+            using var command = this.Connection.CreateCommand();
+            
                 command.CommandText = $""" 
                 UPDATE tracks
                 SET play_count = play_count + 1
                 WHERE path = "{track.path}"
                 """;
                 await command.ExecuteNonQueryAsync();
-            }
+            
         }
 
         public async Task<List<string>> GetMostPopularTracks()
         {
-            List<string> tracks = new List<string>();
+            List<string> tracks = [];
             using var command = this.Connection.CreateCommand();
 
             command.CommandText = "SELECT * FROM tracks WHERE play_count > 0 ORDER BY play_count DESC";
@@ -272,7 +270,7 @@ namespace TheBesterMusicApp
 
         public async Task<List<string>> GetPlaylists()
         {
-            List<string> playlists = new List<string>();
+            List<string> playlists = [];
             using var command = this.Connection.CreateCommand();
 
             command.CommandText = "SELECT * FROM playlists";
@@ -288,7 +286,7 @@ namespace TheBesterMusicApp
 
         public async Task<List<Track>> GetTracksFromPlaylist(string playlist_name)
         {
-            List<Track> tracks = new List<Track>();
+            List<Track> tracks = [];
 
             using var command = this.Connection.CreateCommand();
             command.CommandText = $"""
@@ -311,8 +309,7 @@ namespace TheBesterMusicApp
 
         public async Task AddTrackToPlaylist(Track track, string playlist_name, int index = -1)
         {
-            List<Track> tracks = new List<Track>();
-            tracks = await GetTracksFromPlaylist(playlist_name);
+            List<Track> tracks = await GetTracksFromPlaylist(playlist_name);
             if(index != -1)
             {
                 tracks.Insert(index, track);
@@ -344,16 +341,9 @@ namespace TheBesterMusicApp
 
         public async Task RemoveTrackFromPlaylist(Track track, string playlist_name)
         {
-            List<Track> tracks = new List<Track>();
-            tracks = await GetTracksFromPlaylist(playlist_name);
-
-            if(tracks.Contains(track))
-            {
-                tracks.Remove(track);
-            }
-
+            List<Track> tracks = await GetTracksFromPlaylist(playlist_name);
+            tracks.Remove(track);
             string tracks_string = SerializeTracks(tracks);
-            Debug.WriteLine(tracks_string);
 
             using var command = this.Connection.CreateCommand();
             command.CommandText = $"""
@@ -393,12 +383,12 @@ namespace TheBesterMusicApp
 
         private static string SerializeTracks(List<Track> tracks)
         {
-            DataContractJsonSerializer serializer = new DataContractJsonSerializer(typeof(List<Track>));
-            MemoryStream ms = new MemoryStream();
+            DataContractJsonSerializer serializer = new(typeof(List<Track>));
+            MemoryStream ms = new();
             serializer.WriteObject(ms, tracks);
 
             ms.Position = 0;
-            StreamReader sr = new StreamReader(ms);
+            StreamReader sr = new(ms);
             string tracks_string = sr.ReadToEnd();
 
             tracks_string = tracks_string.Replace('\'', '`');
@@ -407,8 +397,8 @@ namespace TheBesterMusicApp
         private static List<Track> DeserializeTracks(string tracks_string)
         {
             tracks_string = tracks_string.Replace('`', '\'');
-            using MemoryStream ms = new MemoryStream(Encoding.Unicode.GetBytes(tracks_string));
-            DataContractJsonSerializer deserializer = new DataContractJsonSerializer(typeof(List<Track>));
+            using MemoryStream ms = new(Encoding.Unicode.GetBytes(tracks_string));
+            DataContractJsonSerializer deserializer = new(typeof(List<Track>));
             List<Track> tracks = (List<Track>)deserializer.ReadObject(ms);
             return tracks;
         }
