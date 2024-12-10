@@ -382,11 +382,13 @@ namespace TheBesterMusicApp
             // lv_Playlists_Track_List
             // 
             lv_Playlists_Track_List.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            lv_Playlists_Track_List.AutoArrange = false;
             lv_Playlists_Track_List.BackColor = Color.FromArgb(46, 49, 50);
             lv_Playlists_Track_List.BorderStyle = System.Windows.Forms.BorderStyle.None;
             lv_Playlists_Track_List.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] { columnHeader1, columnHeader2, columnHeader3, columnHeader4, columnHeader5 });
             lv_Playlists_Track_List.ForeColor = Color.WhiteSmoke;
             lv_Playlists_Track_List.FullRowSelect = true;
+            lv_Playlists_Track_List.LabelEdit = true;
             lv_Playlists_Track_List.Location = new Point(227, 0);
             lv_Playlists_Track_List.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             lv_Playlists_Track_List.MultiSelect = false;
@@ -397,6 +399,9 @@ namespace TheBesterMusicApp
             lv_Playlists_Track_List.View = System.Windows.Forms.View.Details;
             lv_Playlists_Track_List.DoubleClick += Track_List_DoubleClick;
             lv_Playlists_Track_List.MouseClick += Track_List_RightClick;
+            lv_Playlists_Track_List.MouseDown += lv_Playlists_Track_List_MouseDown;
+            lv_Playlists_Track_List.MouseMove += lv_Playlists_Track_List_MouseMove;
+            lv_Playlists_Track_List.MouseUp += lv_Playlists_Track_List_MouseUp;
             // 
             // columnHeader1
             // 
@@ -651,7 +656,7 @@ namespace TheBesterMusicApp
             // 
             cms_Track_Menu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { tsmi_Add_To_Playlist, tsmi_Remove_From_Playlist });
             cms_Track_Menu.Name = "contextMenuStrip1";
-            cms_Track_Menu.Size = new Size(189, 70);
+            cms_Track_Menu.Size = new Size(189, 48);
             // 
             // tsmi_Add_To_Playlist
             // 

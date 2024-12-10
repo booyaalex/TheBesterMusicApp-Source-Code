@@ -18,6 +18,8 @@ using static System.Net.Mime.MediaTypeNames;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.TextBox;
 using Microsoft.VisualBasic;
+using Windows.ApplicationModel.VoiceCommands;
+//using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace TheBesterMusicApp
 {
@@ -34,6 +36,8 @@ namespace TheBesterMusicApp
         IWavePlayer music_player = new WaveOutEvent();
         AudioFileReader music_reader;
         int current_mode = 0; //0 Normal, 1 Shuffle, 2 Repeat;
+
+        ListViewItem held_item;
 
         public Form1()
         {
@@ -465,7 +469,7 @@ namespace TheBesterMusicApp
                 return;
             }
 
-            await db.AddTrackToPlaylist((Track)listview.SelectedItems[0].Tag, item.Text);
+            await db.AddTrackToPlaylist((Track)listview.SelectedItems[0].Tag, item.Text, 1);
         }
 
         private async void tsmi_Remove_From_Playlist_Click(object sender, EventArgs e)
@@ -500,6 +504,41 @@ namespace TheBesterMusicApp
 
             await db.RemoveTrackFromPlaylist((Track)listview.SelectedItems[0].Tag, selected_playlist);
             DisplayMusic(3);
+        }
+
+        /*
+         * Drag And Reordering
+         */
+        private void lv_Playlists_Track_List_MouseDown(object sender, MouseEventArgs e)
+        {
+            held_item = lv_Playlists_Track_List.GetItemAt(e.X, e.Y);
+            if (held_item == null) { return; }
+        }
+
+        private void lv_Playlists_Track_List_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (held_item == null) { return; }
+            Cursor = Cursors.SizeAll;
+        }
+
+        private void lv_Playlists_Track_List_MouseUp(object sender, MouseEventArgs e)
+        {
+            if (held_item == null) { return; }
+            ListViewItem item_at_insert_pos = lv_Playlists_Track_List.GetItemAt(0, e.Y);
+            if (item_at_insert_pos == null || held_item == item_at_insert_pos) { return; }
+            lv_Playlists_Track_List.Items.Remove(held_item);
+            lv_Playlists_Track_List.Items.Insert(item_at_insert_pos.Index, held_item);
+
+            RearangePlaylist((Track)held_item.Tag, item_at_insert_pos.Index);
+
+            held_item = null;
+            Cursor = Cursors.Default;
+        }
+        private async void RearangePlaylist(Track track, int new_index)
+        {
+            Database db = await Database.Create();
+            await db.RemoveTrackFromPlaylist(track, selected_playlist);
+            await db.AddTrackToPlaylist(track, selected_playlist, new_index - 1);
         }
     }
     public struct Track

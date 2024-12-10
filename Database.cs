@@ -304,11 +304,18 @@ namespace TheBesterMusicApp
             return tracks;
         }
 
-        public async Task AddTrackToPlaylist(Track track, string playlist_name)
+        public async Task AddTrackToPlaylist(Track track, string playlist_name, int index = -1)
         {
             List<Track> tracks = new List<Track>();
             tracks = await GetTracksFromPlaylist(playlist_name);
-            tracks.Add(track);
+            if(index != -1)
+            {
+                tracks.Insert(index, track);
+            } 
+            else
+            {
+                tracks.Add(track);
+            }
 
             string tracks_string = SerializeTracks(tracks);
             Debug.WriteLine(tracks_string);
