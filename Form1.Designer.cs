@@ -84,6 +84,9 @@ namespace TheBesterMusicApp
             cms_Track_Menu = new System.Windows.Forms.ContextMenuStrip(components);
             tsmi_Add_To_Playlist = new System.Windows.Forms.ToolStripMenuItem();
             tsmi_Remove_From_Playlist = new System.Windows.Forms.ToolStripMenuItem();
+            cms_Playlist_Menu = new System.Windows.Forms.ContextMenuStrip(components);
+            tsmi_Rename_Playlist = new System.Windows.Forms.ToolStripMenuItem();
+            tsmi_Delete_Playlist = new System.Windows.Forms.ToolStripMenuItem();
             tab_Page_Select.SuspendLayout();
             tp_Tracks.SuspendLayout();
             tp_Albums.SuspendLayout();
@@ -96,6 +99,7 @@ namespace TheBesterMusicApp
             ((System.ComponentModel.ISupportInitialize)tkb_Control_Time_Bar).BeginInit();
             ((System.ComponentModel.ISupportInitialize)pic_Control_Album_Cover).BeginInit();
             cms_Track_Menu.SuspendLayout();
+            cms_Playlist_Menu.SuspendLayout();
             SuspendLayout();
             // 
             // tab_Page_Select
@@ -112,7 +116,7 @@ namespace TheBesterMusicApp
             tab_Page_Select.Name = "tab_Page_Select";
             tab_Page_Select.Padding = new Point(0, 0);
             tab_Page_Select.SelectedIndex = 0;
-            tab_Page_Select.Size = new Size(992, 393);
+            tab_Page_Select.Size = new Size(1043, 406);
             tab_Page_Select.TabIndex = 0;
             tab_Page_Select.Selected += tab_Page_Select_TabIndexChanged;
             // 
@@ -125,7 +129,7 @@ namespace TheBesterMusicApp
             tp_Tracks.Location = new Point(4, 26);
             tp_Tracks.Margin = new System.Windows.Forms.Padding(0);
             tp_Tracks.Name = "tp_Tracks";
-            tp_Tracks.Size = new Size(984, 363);
+            tp_Tracks.Size = new Size(1035, 376);
             tp_Tracks.TabIndex = 0;
             tp_Tracks.Text = "Tracks";
             // 
@@ -138,13 +142,13 @@ namespace TheBesterMusicApp
             lv_Tracks_Most_Popular.ForeColor = Color.WhiteSmoke;
             lv_Tracks_Most_Popular.FullRowSelect = true;
             lv_Tracks_Most_Popular.HideSelection = true;
-            lv_Tracks_Most_Popular.Location = new Point(765, 0);
+            lv_Tracks_Most_Popular.Location = new Point(816, 0);
             lv_Tracks_Most_Popular.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             lv_Tracks_Most_Popular.MultiSelect = false;
             lv_Tracks_Most_Popular.Name = "lv_Tracks_Most_Popular";
             lv_Tracks_Most_Popular.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             lv_Tracks_Most_Popular.ShowGroups = false;
-            lv_Tracks_Most_Popular.Size = new Size(219, 363);
+            lv_Tracks_Most_Popular.Size = new Size(219, 376);
             lv_Tracks_Most_Popular.TabIndex = 7;
             lv_Tracks_Most_Popular.UseCompatibleStateImageBehavior = false;
             lv_Tracks_Most_Popular.View = System.Windows.Forms.View.List;
@@ -161,7 +165,7 @@ namespace TheBesterMusicApp
             lv_Tracks_Track_List.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             lv_Tracks_Track_List.MultiSelect = false;
             lv_Tracks_Track_List.Name = "lv_Tracks_Track_List";
-            lv_Tracks_Track_List.Size = new Size(757, 363);
+            lv_Tracks_Track_List.Size = new Size(808, 376);
             lv_Tracks_Track_List.TabIndex = 0;
             lv_Tracks_Track_List.UseCompatibleStateImageBehavior = false;
             lv_Tracks_Track_List.View = System.Windows.Forms.View.Details;
@@ -203,7 +207,7 @@ namespace TheBesterMusicApp
             tp_Albums.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             tp_Albums.Name = "tp_Albums";
             tp_Albums.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            tp_Albums.Size = new Size(984, 363);
+            tp_Albums.Size = new Size(1035, 376);
             tp_Albums.TabIndex = 1;
             tp_Albums.Text = "Albums";
             // 
@@ -227,7 +231,7 @@ namespace TheBesterMusicApp
             lv_Albums_Album_List.Location = new Point(0, 0);
             lv_Albums_Album_List.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             lv_Albums_Album_List.Name = "lv_Albums_Album_List";
-            lv_Albums_Album_List.Size = new Size(219, 363);
+            lv_Albums_Album_List.Size = new Size(219, 392);
             lv_Albums_Album_List.Sorting = System.Windows.Forms.SortOrder.Ascending;
             lv_Albums_Album_List.TabIndex = 3;
             lv_Albums_Album_List.UseCompatibleStateImageBehavior = false;
@@ -246,7 +250,7 @@ namespace TheBesterMusicApp
             lv_Albums_Track_List.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             lv_Albums_Track_List.MultiSelect = false;
             lv_Albums_Track_List.Name = "lv_Albums_Track_List";
-            lv_Albums_Track_List.Size = new Size(757, 363);
+            lv_Albums_Track_List.Size = new Size(822, 392);
             lv_Albums_Track_List.TabIndex = 1;
             lv_Albums_Track_List.UseCompatibleStateImageBehavior = false;
             lv_Albums_Track_List.View = System.Windows.Forms.View.Details;
@@ -286,7 +290,7 @@ namespace TheBesterMusicApp
             tp_Artists.Location = new Point(4, 26);
             tp_Artists.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             tp_Artists.Name = "tp_Artists";
-            tp_Artists.Size = new Size(984, 363);
+            tp_Artists.Size = new Size(1035, 376);
             tp_Artists.TabIndex = 3;
             tp_Artists.Text = "Artists";
             // 
@@ -301,7 +305,7 @@ namespace TheBesterMusicApp
             lv_Artists_Artist_List.Location = new Point(0, 0);
             lv_Artists_Artist_List.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             lv_Artists_Artist_List.Name = "lv_Artists_Artist_List";
-            lv_Artists_Artist_List.Size = new Size(219, 363);
+            lv_Artists_Artist_List.Size = new Size(219, 376);
             lv_Artists_Artist_List.Sorting = System.Windows.Forms.SortOrder.Ascending;
             lv_Artists_Artist_List.TabIndex = 5;
             lv_Artists_Artist_List.UseCompatibleStateImageBehavior = false;
@@ -320,7 +324,7 @@ namespace TheBesterMusicApp
             lv_Artists_Track_List.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             lv_Artists_Track_List.MultiSelect = false;
             lv_Artists_Track_List.Name = "lv_Artists_Track_List";
-            lv_Artists_Track_List.Size = new Size(757, 363);
+            lv_Artists_Track_List.Size = new Size(808, 376);
             lv_Artists_Track_List.TabIndex = 4;
             lv_Artists_Track_List.UseCompatibleStateImageBehavior = false;
             lv_Artists_Track_List.View = System.Windows.Forms.View.Details;
@@ -361,7 +365,7 @@ namespace TheBesterMusicApp
             tp_Playlists.Location = new Point(4, 26);
             tp_Playlists.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             tp_Playlists.Name = "tp_Playlists";
-            tp_Playlists.Size = new Size(984, 363);
+            tp_Playlists.Size = new Size(1035, 376);
             tp_Playlists.TabIndex = 2;
             tp_Playlists.Text = "Playlists";
             // 
@@ -393,7 +397,7 @@ namespace TheBesterMusicApp
             lv_Playlists_Track_List.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             lv_Playlists_Track_List.MultiSelect = false;
             lv_Playlists_Track_List.Name = "lv_Playlists_Track_List";
-            lv_Playlists_Track_List.Size = new Size(757, 363);
+            lv_Playlists_Track_List.Size = new Size(808, 376);
             lv_Playlists_Track_List.TabIndex = 7;
             lv_Playlists_Track_List.UseCompatibleStateImageBehavior = false;
             lv_Playlists_Track_List.View = System.Windows.Forms.View.Details;
@@ -439,12 +443,14 @@ namespace TheBesterMusicApp
             lv_Playlists_Playlist_List.Location = new Point(0, 23);
             lv_Playlists_Playlist_List.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             lv_Playlists_Playlist_List.Name = "lv_Playlists_Playlist_List";
-            lv_Playlists_Playlist_List.Size = new Size(219, 340);
+            lv_Playlists_Playlist_List.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            lv_Playlists_Playlist_List.Size = new Size(219, 361);
             lv_Playlists_Playlist_List.Sorting = System.Windows.Forms.SortOrder.Ascending;
             lv_Playlists_Playlist_List.TabIndex = 6;
             lv_Playlists_Playlist_List.UseCompatibleStateImageBehavior = false;
             lv_Playlists_Playlist_List.View = System.Windows.Forms.View.List;
             lv_Playlists_Playlist_List.DoubleClick += ListSelect;
+            lv_Playlists_Playlist_List.MouseClick += lv_Playlists_Playlist_List_MouseClick;
             // 
             // tp_Settings
             // 
@@ -455,7 +461,7 @@ namespace TheBesterMusicApp
             tp_Settings.Location = new Point(4, 26);
             tp_Settings.Margin = new System.Windows.Forms.Padding(0);
             tp_Settings.Name = "tp_Settings";
-            tp_Settings.Size = new Size(984, 363);
+            tp_Settings.Size = new Size(1035, 376);
             tp_Settings.TabIndex = 4;
             tp_Settings.Text = "Settings";
             // 
@@ -487,17 +493,17 @@ namespace TheBesterMusicApp
             pnl_Song_Control.Controls.Add(tkb_Control_Time_Bar);
             pnl_Song_Control.Controls.Add(pic_Control_Album_Cover);
             pnl_Song_Control.ForeColor = Color.WhiteSmoke;
-            pnl_Song_Control.Location = new Point(6, 400);
+            pnl_Song_Control.Location = new Point(6, 413);
             pnl_Song_Control.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             pnl_Song_Control.Name = "pnl_Song_Control";
-            pnl_Song_Control.Size = new Size(992, 118);
+            pnl_Song_Control.Size = new Size(1043, 118);
             pnl_Song_Control.TabIndex = 1;
             // 
             // tkb_Control_Volume
             // 
             tkb_Control_Volume.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
             tkb_Control_Volume.AutoSize = false;
-            tkb_Control_Volume.Location = new Point(505, 78);
+            tkb_Control_Volume.Location = new Point(556, 78);
             tkb_Control_Volume.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             tkb_Control_Volume.Maximum = 100;
             tkb_Control_Volume.Name = "tkb_Control_Volume";
@@ -518,7 +524,7 @@ namespace TheBesterMusicApp
             btn_Control_Mode_Change.FlatAppearance.MouseDownBackColor = Color.Transparent;
             btn_Control_Mode_Change.FlatAppearance.MouseOverBackColor = Color.Transparent;
             btn_Control_Mode_Change.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            btn_Control_Mode_Change.Location = new Point(940, 72);
+            btn_Control_Mode_Change.Location = new Point(991, 72);
             btn_Control_Mode_Change.Margin = new System.Windows.Forms.Padding(6);
             btn_Control_Mode_Change.Name = "btn_Control_Mode_Change";
             btn_Control_Mode_Change.Size = new Size(41, 40);
@@ -537,7 +543,7 @@ namespace TheBesterMusicApp
             btn_Control_Next_Button.FlatAppearance.MouseDownBackColor = Color.Transparent;
             btn_Control_Next_Button.FlatAppearance.MouseOverBackColor = Color.Transparent;
             btn_Control_Next_Button.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            btn_Control_Next_Button.Location = new Point(454, 72);
+            btn_Control_Next_Button.Location = new Point(505, 72);
             btn_Control_Next_Button.Margin = new System.Windows.Forms.Padding(6);
             btn_Control_Next_Button.Name = "btn_Control_Next_Button";
             btn_Control_Next_Button.Size = new Size(41, 40);
@@ -556,7 +562,7 @@ namespace TheBesterMusicApp
             btn_Control_Previous_Button.FlatAppearance.MouseDownBackColor = Color.Transparent;
             btn_Control_Previous_Button.FlatAppearance.MouseOverBackColor = Color.Transparent;
             btn_Control_Previous_Button.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            btn_Control_Previous_Button.Location = new Point(349, 72);
+            btn_Control_Previous_Button.Location = new Point(400, 72);
             btn_Control_Previous_Button.Margin = new System.Windows.Forms.Padding(6);
             btn_Control_Previous_Button.Name = "btn_Control_Previous_Button";
             btn_Control_Previous_Button.Size = new Size(41, 40);
@@ -575,7 +581,7 @@ namespace TheBesterMusicApp
             btn_Control_Play_Button.FlatAppearance.MouseDownBackColor = Color.Transparent;
             btn_Control_Play_Button.FlatAppearance.MouseOverBackColor = Color.Transparent;
             btn_Control_Play_Button.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            btn_Control_Play_Button.Location = new Point(401, 72);
+            btn_Control_Play_Button.Location = new Point(452, 72);
             btn_Control_Play_Button.Margin = new System.Windows.Forms.Padding(6);
             btn_Control_Play_Button.Name = "btn_Control_Play_Button";
             btn_Control_Play_Button.Size = new Size(41, 40);
@@ -632,7 +638,7 @@ namespace TheBesterMusicApp
             // tkb_Control_Time_Bar
             // 
             tkb_Control_Time_Bar.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
-            tkb_Control_Time_Bar.Location = new Point(349, 5);
+            tkb_Control_Time_Bar.Location = new Point(400, 5);
             tkb_Control_Time_Bar.Margin = new System.Windows.Forms.Padding(0);
             tkb_Control_Time_Bar.Maximum = 100;
             tkb_Control_Time_Bar.Name = "tkb_Control_Time_Bar";
@@ -672,12 +678,32 @@ namespace TheBesterMusicApp
             tsmi_Remove_From_Playlist.Text = "Remove From Playlist";
             tsmi_Remove_From_Playlist.Click += tsmi_Remove_From_Playlist_Click;
             // 
+            // cms_Playlist_Menu
+            // 
+            cms_Playlist_Menu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { tsmi_Rename_Playlist, tsmi_Delete_Playlist });
+            cms_Playlist_Menu.Name = "cms_Playlist_Menu";
+            cms_Playlist_Menu.Size = new Size(181, 70);
+            // 
+            // tsmi_Rename_Playlist
+            // 
+            tsmi_Rename_Playlist.Name = "tsmi_Rename_Playlist";
+            tsmi_Rename_Playlist.Size = new Size(180, 22);
+            tsmi_Rename_Playlist.Text = "Rename Playlist";
+            tsmi_Rename_Playlist.Click += tsmi_Rename_Playlist_Click;
+            // 
+            // tsmi_Delete_Playlist
+            // 
+            tsmi_Delete_Playlist.Name = "tsmi_Delete_Playlist";
+            tsmi_Delete_Playlist.Size = new Size(180, 22);
+            tsmi_Delete_Playlist.Text = "Delete Playlist";
+            tsmi_Delete_Playlist.Click += tsmi_Delete_Playlist_Click;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             BackColor = Color.FromArgb(34, 36, 37);
-            ClientSize = new Size(1002, 519);
+            ClientSize = new Size(1053, 532);
             Controls.Add(pnl_Song_Control);
             Controls.Add(tab_Page_Select);
             ForeColor = Color.WhiteSmoke;
@@ -698,6 +724,7 @@ namespace TheBesterMusicApp
             ((System.ComponentModel.ISupportInitialize)tkb_Control_Time_Bar).EndInit();
             ((System.ComponentModel.ISupportInitialize)pic_Control_Album_Cover).EndInit();
             cms_Track_Menu.ResumeLayout(false);
+            cms_Playlist_Menu.ResumeLayout(false);
             ResumeLayout(false);
         }
 
@@ -746,7 +773,6 @@ namespace TheBesterMusicApp
         private System.Windows.Forms.Button btn_Update_Tracks;
         private System.Windows.Forms.ListView lv_Playlists_Playlist_List;
         private System.Windows.Forms.ListView lv_Tracks_Most_Popular;
-        private System.Windows.Forms.Button button1;
         private System.Windows.Forms.ListView lv_Playlists_Track_List;
         private System.Windows.Forms.ColumnHeader columnHeader1;
         private System.Windows.Forms.ColumnHeader columnHeader2;
@@ -757,6 +783,9 @@ namespace TheBesterMusicApp
         private System.Windows.Forms.ContextMenuStrip cms_Track_Menu;
         private System.Windows.Forms.ToolStripMenuItem tsmi_Add_To_Playlist;
         private System.Windows.Forms.ToolStripMenuItem tsmi_Remove_From_Playlist;
+        private System.Windows.Forms.ContextMenuStrip cms_Playlist_Menu;
+        private System.Windows.Forms.ToolStripMenuItem tsmi_Rename_Playlist;
+        private System.Windows.Forms.ToolStripMenuItem tsmi_Delete_Playlist;
     }
 }
 

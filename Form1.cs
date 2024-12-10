@@ -469,7 +469,7 @@ namespace TheBesterMusicApp
                 return;
             }
 
-            await db.AddTrackToPlaylist((Track)listview.SelectedItems[0].Tag, item.Text, 1);
+            await db.AddTrackToPlaylist((Track)listview.SelectedItems[0].Tag, item.Text);
         }
 
         private async void tsmi_Remove_From_Playlist_Click(object sender, EventArgs e)
@@ -507,7 +507,31 @@ namespace TheBesterMusicApp
         }
 
         /*
-         * Drag And Reordering
+         * Playlist Options
+         */
+        private void lv_Playlists_Playlist_List_MouseClick(object sender, MouseEventArgs e)
+        {
+            if (e.Button != MouseButtons.Right) { return; }
+            cms_Playlist_Menu.Show(Cursor.Position);
+        }
+        private async void tsmi_Rename_Playlist_Click(object sender, EventArgs e)
+        {
+            Database db = await Database.Create();
+            string input = Interaction.InputBox("Enter in The New Name of Your Playlist:", "Type in a Name");
+            await db.RenamePlaylist(lv_Playlists_Playlist_List.SelectedItems[0].Text, input);
+            DisplayList(3);
+        }
+        private async void tsmi_Delete_Playlist_Click(object sender, EventArgs e)
+        {
+            Database db = await Database.Create();
+            await db.DeletePlaylist(lv_Playlists_Playlist_List.SelectedItems[0].Text);
+            selected_playlist = "";
+            DisplayList(3);
+            DisplayMusic(3);
+        }
+
+        /*
+         * Drag And Reordering Playlists
          */
         private void lv_Playlists_Track_List_MouseDown(object sender, MouseEventArgs e)
         {
@@ -540,6 +564,8 @@ namespace TheBesterMusicApp
             await db.RemoveTrackFromPlaylist(track, selected_playlist);
             await db.AddTrackToPlaylist(track, selected_playlist, new_index - 1);
         }
+
+        
     }
     public struct Track
     {

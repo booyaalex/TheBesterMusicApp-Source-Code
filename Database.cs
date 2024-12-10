@@ -252,6 +252,11 @@ namespace TheBesterMusicApp
                 MessageBox.Show("You can't use a name that is already being used.");
                 return;
             }
+            if (name == "")
+            {
+                MessageBox.Show("Please type in a name.");
+                return;
+            }
 
             using var command = this.Connection.CreateCommand();
             command.CommandText = $"""INSERT INTO playlists (name) VALUES ("{name}");""";
@@ -365,6 +370,25 @@ namespace TheBesterMusicApp
                 Debug.WriteLine(err);
                 Debug.WriteLine(tracks_string);
             }
+        }
+        public async Task RenamePlaylist(string playlist_name, string new_name)
+        {
+            using var command = this.Connection.CreateCommand();
+            command.CommandText = $"""
+            UPDATE playlists
+            SET name = "{new_name}"
+            WHERE name = "{playlist_name}"
+            """;
+            await command.ExecuteNonQueryAsync();
+        }
+        public async Task DeletePlaylist(string playlist_name)
+        {
+            using var command = this.Connection.CreateCommand();
+            command.CommandText = $"""
+            DELETE FROM playlists 
+            WHERE name="{playlist_name}"
+            """;
+            await command.ExecuteNonQueryAsync();
         }
 
         private static string SerializeTracks(List<Track> tracks)
