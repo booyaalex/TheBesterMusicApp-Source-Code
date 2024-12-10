@@ -18,10 +18,11 @@ using static System.Net.Mime.MediaTypeNames;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.TextBox;
 using Microsoft.VisualBasic;
-//using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+using System.Runtime.Versioning;
 
 namespace TheBesterMusicApp
 {
+    [SupportedOSPlatform("windows")]
     public partial class Form1 : Form
     {
         List<Track> tracks = [];
@@ -59,26 +60,6 @@ namespace TheBesterMusicApp
 
             current_page = pages[0];
         }
-        private Page GetPage()
-        {
-            if (tab_Page_Select.SelectedTab.Name == "tp_Tracks")
-            {
-                return pages[0];
-            }
-            else if (tab_Page_Select.SelectedTab.Name == "tp_Albums")
-            {
-                return pages[1];
-            }
-            else if (tab_Page_Select.SelectedTab.Name == "tp_Artists")
-            {
-                return pages[2];
-            }
-            else if (tab_Page_Select.SelectedTab.Name == "tp_Playlists")
-            {
-                return pages[3];
-            }
-            return new Page();
-        }
 
         /*
          * Displaying Music 
@@ -101,9 +82,9 @@ namespace TheBesterMusicApp
 
         private void tab_Page_Select_TabIndexChanged(object sender, TabControlEventArgs e)
         {
-            Page page = GetPage();
-            current_page = page;
-
+            if (e.TabPageIndex == 4) { return; }
+            current_page = pages[e.TabPageIndex];
+            
             DisplayList();
             DisplayMusic();
         }
@@ -160,7 +141,7 @@ namespace TheBesterMusicApp
             else if (current_page.index == 1)
             {
                 item_list = await db.GetAllWithProperty("album");
-                if (selected_album == "")
+                if (selected_album == "" && item_list.Count > 0)
                 {
                     selected_album = item_list[0];
                 }
@@ -168,7 +149,7 @@ namespace TheBesterMusicApp
             else if (current_page.index == 2)
             {
                 item_list = await db.GetAllWithProperty("artist");
-                if (selected_artist == "")
+                if (selected_artist == "" && item_list.Count > 0)
                 {
                     selected_artist = item_list[0];
                 }
@@ -176,7 +157,7 @@ namespace TheBesterMusicApp
             else if (current_page.index == 3)
             {
                 item_list = await db.GetPlaylists();
-                if (selected_playlist == "")
+                if (selected_playlist == "" && item_list.Count > 0)
                 {
                     selected_playlist = item_list[0];
                 }

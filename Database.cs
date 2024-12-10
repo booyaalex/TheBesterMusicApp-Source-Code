@@ -12,9 +12,11 @@ using System.Xml.Linq;
 using Windows.Media.Playlists;
 using System.Runtime.Serialization.Json;
 using Windows.Foundation;
+using System.Runtime.Versioning;
 
 namespace TheBesterMusicApp
 {
+    [SupportedOSPlatform("windows")]
     public class Database
     {
         private SqliteConnection Connection { get; set; }
